@@ -1,18 +1,30 @@
 // Enemies our player must avoid
+var Xdir = 100;
+var Ydir = 84;
+var Canvasleft = 0;
+var Canvasright = 400;
+var Canvastop = 84;
+var Canvasbottom = 400;
+
 var Enemy = function (x, y) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
     this.x = x;
     this.y = y;
-    // The image/sprite for our enemies, this uses
-    // a helper we've provided to easily load images
+    var enemySpeeds = [100, 140, 160, 180, 200, 240, 280, 320];
+    var randomSpeed = enemySpeeds[Math.floor(Math.random() * enemySpeeds.length)];
+    this.speed = randomSpeed;
+    
     this.sprite = 'images/enemy-bug.png';
 };
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function (dt) {
-    this.x += this.speed * dt;    
+    this.x += this.speed * dt;
+    if (this.x > Canvasright) {
+        this.x = Math.floor(Math.random() * -1000);
+    }
 };
 
 // Draw the enemy on the screen, required method for game
@@ -36,30 +48,23 @@ Player.prototype.render = function() {
 Player.prototype.update = function(dt) {
 };
 
-var Xdir = 101;
-var Ydir = 83;
-var Moveleft = 0;
-var Moveright = 400;
-var Moveup = 83;
-var Movedown = 400;
-
 Player.prototype.handleInput = function (key) {
     switch(key){
     case 'left':
-        if (this.x > Moveleft)
+        if (this.x > Canvasleft)
         this.x -=Xdir;
         break;
     case 'right':
-        if (this.x < Moveright)
+        if (this.x < Canvasright)
         this.x +=Xdir;
         break;
     case 'up':
-        if (this.y > Moveup)
+        if (this.y > Canvastop)
         this.y -=Ydir;
         else player.resetOnWin();
         break;
     case 'down':
-        if (this.y < Movedown)
+        if (this.y < Canvasbottom)
         this.y +=Ydir;
         break;
     default:
@@ -69,16 +74,18 @@ Player.prototype.handleInput = function (key) {
 
 // initializes enemies and player
 var allEnemies = [];
-var enemy1 = new Enemy(0, 150);
+var enemy1 = new Enemy(0, 62);
 allEnemies.push(enemy1);
-var enemy2 = new Enemy(0, 70);
+var enemy2 = new Enemy(-200, 62);
 allEnemies.push(enemy2);
-var enemy3 = new Enemy(0, 220);
+var enemy3 = new Enemy(0, 144);
 allEnemies.push(enemy3);
-var enemy4 = new Enemy(0, 70);
+var enemy4 = new Enemy(-200, 144);
 allEnemies.push(enemy4);
-var enemy5 = new Enemy(0, 150);
+var enemy5 = new Enemy(0, 230);
 allEnemies.push(enemy5);
+var enemy6 = new Enemy(-200, 230);
+allEnemies.push(enemy6);
 
 var player = new Player(200, 400);
 
