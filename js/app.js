@@ -1,4 +1,3 @@
-// Enemies our player must avoid
 var Xdir = 100;
 var Ydir = 84;
 var Canvasleft = 0;
@@ -11,11 +10,10 @@ var Enemy = function (x, y) {
     // we've provided one for you to get started
     this.x = x;
     this.y = y;
-    var enemySpeeds = [100, 140, 160, 180, 200, 240, 280, 320];
-    var randomSpeed = enemySpeeds[Math.floor(Math.random() * enemySpeeds.length)];
-    this.speed = randomSpeed;
-    
     this.sprite = 'images/enemy-bug.png';
+    var enemySpeeds = [80, 140, 160, 180, 200, 240, 280, 300];
+    var randomSpeed = enemySpeeds[Math.floor(Math.random() * enemySpeeds.length)];
+    this.speed = randomSpeed;    
 };
 
 // Update the enemy's position, required method for game
@@ -23,10 +21,9 @@ var Enemy = function (x, y) {
 Enemy.prototype.update = function (dt) {
     this.x += this.speed * dt;
     if (this.x > Canvasright) {
-        this.x = Math.floor(Math.random() * -1000);
+        this.x = Math.floor(Math.random() * -300);
     }
 };
-
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -35,11 +32,14 @@ Enemy.prototype.render = function() {
 // Now write your own player class
 // This class requires an update(), render() and
 // a handleInput() method.
+
+
 var Player = function (x, y) {
     this.x = x;
     this.y = y;
     this.sprite = 'images/char-boy.png';
 };
+
 
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
@@ -47,6 +47,23 @@ Player.prototype.render = function() {
 
 Player.prototype.update = function(dt) {
 };
+
+var score = 0;
+
+Player.prototype.reset = function () {
+    this.x = 200;
+    this.y = 400;
+    score--;
+    document.getElementById('score').innerHTML = 'Score ['+score+']';
+};
+
+Player.prototype.resetOnWin = function () {
+    this.x = 200;
+    this.y = 400;
+    score++;
+    document.getElementById('score').innerHTML = 'Score ['+score+']';
+};
+
 
 Player.prototype.handleInput = function (key) {
     switch(key){
@@ -70,6 +87,14 @@ Player.prototype.handleInput = function (key) {
     default:
         return;
     }
+};
+
+Player.prototype.update = function() {
+for(var e = 0, quantityEnemies = allEnemies.length; e < quantityEnemies; e++) {
+        if(player.x <= (allEnemies[e].x + 70) && allEnemies[e].x <= (player.x + 50) && player.y <= (allEnemies[e].y + 70) && allEnemies[e].y <= (player.y + 60)) {
+            player.reset();               
+            }
+}
 };
 
 // initializes enemies and player
