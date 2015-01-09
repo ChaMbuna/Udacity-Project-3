@@ -1,10 +1,15 @@
-var Xdir = 100;
+// Defines playfield and increments for movement
+var Xdir = 101;
 var Ydir = 84;
 var Canvasleft = 0;
 var Canvasright = 400;
 var Canvastop = 84;
 var Canvasbottom = 400;
 
+
+// ENEMY SETUP
+
+// Sets random speed for each enemy
 var Enemy = function (x, y) {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
@@ -16,31 +21,51 @@ var Enemy = function (x, y) {
     this.speed = randomSpeed;    
 };
 
-// Update the enemy's position, required method for game
-// Parameter: dt, a time delta between ticks
+// Sets enemy starting locations and store in array
+var allEnemies = [];
+
+// Top row
+var enemy1 = new Enemy(0, 62);
+allEnemies.push(enemy1);
+var enemy2 = new Enemy(-200, 62);
+allEnemies.push(enemy2);
+// Middle row
+var enemy3 = new Enemy(0, 144);
+allEnemies.push(enemy3);
+var enemy4 = new Enemy(-200, 144);
+allEnemies.push(enemy4);
+// Bottom row
+var enemy5 = new Enemy(0, 230);
+allEnemies.push(enemy5);
+var enemy6 = new Enemy(-200, 230);
+allEnemies.push(enemy6);
+
+// Draws the enemy on the screen
+Enemy.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+};
+
+// Reset enemy positions
+// Randomize enemy respawn position so movement patterns are less predictable
 Enemy.prototype.update = function (dt) {
     this.x += this.speed * dt;
     if (this.x > Canvasright) {
         this.x = Math.floor(Math.random() * -300);
     }
 };
-// Draw the enemy on the screen, required method for game
-Enemy.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-};
-
-// Now write your own player class
-// This class requires an update(), render() and
-// a handleInput() method.
 
 
+// PLAYER CHARACTER SETUP
+
+
+// Sets player character
 var Player = function (x, y) {
     this.x = x;
     this.y = y;
     this.sprite = 'images/char-boy.png';
 };
 
-
+// Draws player character on screen
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 };
@@ -48,23 +73,7 @@ Player.prototype.render = function() {
 Player.prototype.update = function(dt) {
 };
 
-var score = 0;
-
-Player.prototype.reset = function () {
-    this.x = 200;
-    this.y = 400;
-    score--;
-    document.getElementById('score').innerHTML = 'Score ['+score+']';
-};
-
-Player.prototype.resetOnWin = function () {
-    this.x = 200;
-    this.y = 400;
-    score++;
-    document.getElementById('score').innerHTML = 'Score ['+score+']';
-};
-
-
+// Handles user input
 Player.prototype.handleInput = function (key) {
     switch(key){
     case 'left':
@@ -89,6 +98,14 @@ Player.prototype.handleInput = function (key) {
     }
 };
 
+// Puts character on screen
+var player = new Player(200, 400);
+
+
+// WIN/LOSE/SCORE TRACKING
+
+// Collision detection
+// Loop through enemies to check for collision with character
 Player.prototype.update = function() {
 for(var e = 0, quantityEnemies = allEnemies.length; e < quantityEnemies; e++) {
         if(player.x <= (allEnemies[e].x + 70) && allEnemies[e].x <= (player.x + 50) && player.y <= (allEnemies[e].y + 70) && allEnemies[e].y <= (player.y + 60)) {
@@ -97,23 +114,28 @@ for(var e = 0, quantityEnemies = allEnemies.length; e < quantityEnemies; e++) {
 }
 };
 
-// initializes enemies and player
-var allEnemies = [];
-var enemy1 = new Enemy(0, 62);
-allEnemies.push(enemy1);
-var enemy2 = new Enemy(-200, 62);
-allEnemies.push(enemy2);
-var enemy3 = new Enemy(0, 144);
-allEnemies.push(enemy3);
-var enemy4 = new Enemy(-200, 144);
-allEnemies.push(enemy4);
-var enemy5 = new Enemy(0, 230);
-allEnemies.push(enemy5);
-var enemy6 = new Enemy(-200, 230);
-allEnemies.push(enemy6);
+//Keeps score for display purposes
+var score = 0;
 
-var player = new Player(200, 400);
+// Player lose condition
+// Respawn character to starting point
+// Substract 1 from score
+Player.prototype.reset = function () {
+    this.x = 200;
+    this.y = 400;
+    score--;
+    document.getElementById('score').innerHTML = 'Score ['+score+']';
+};
 
+// Player win condition
+// Respawn character to starting point
+// Add 1 to score
+Player.prototype.resetOnWin = function () {
+    this.x = 200;
+    this.y = 400;
+    score++;
+    document.getElementById('score').innerHTML = 'Score ['+score+']';
+};
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
